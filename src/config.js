@@ -19,7 +19,7 @@ module.exports = {
   miningServiceFee: Number(process.env.MINING_SERVICE_FEE),
   rewardAccount: process.env.REWARD_ACCOUNT,
   gasLimits: {
-    [jobType.TORNADO_WITHDRAW]: 350000,
+    [jobType.TORNADO_WITHDRAW]: 390000,
     [jobType.MINING_REWARD]: 455000,
     [jobType.MINING_WITHDRAW]: 400000,
   },
