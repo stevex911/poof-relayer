@@ -1,8 +1,8 @@
 const queue = require('./queue')
-const { GasPriceOracle } = require('gas-price-oracle')
+const {GasPriceOracle} = require('gas-price-oracle')
 const gasPriceOracle = new GasPriceOracle()
-const { netId, relayerServiceFee, instances } = require('../config')
-const { version } = require('../package.json')
+const {netId, relayerServiceFee, instances} = require('../config')
+const {version} = require('../package.json')
 
 async function status(req, res) {
   const ethPrices = {
@@ -14,7 +14,7 @@ async function status(req, res) {
   }
   res.json({
     relayerAddress: require('../config').rewardAccount,
-    instances: instances.netId42,
+    instances: instances.netId44787,
     gasPrices: await gasPriceOracle.gasPrices(),
     netId,
     ethPrices,

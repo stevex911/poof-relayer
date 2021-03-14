@@ -1,9 +1,10 @@
 const Web3 = require('web3')
-const { Mutex } = require('async-mutex')
-const { GasPriceOracle } = require('gas-price-oracle')
-const { toWei, toHex, toBN, BN, fromWei } = require('web3-utils')
+const {Mutex} = require('async-mutex')
+const {GasPriceOracle} = require('gas-price-oracle')
+const {toWei, toHex, toBN, BN, fromWei} = require('web3-utils')
 const PromiEvent = require('web3-core-promievent')
-const { sleep, when } = require('./utils')
+const ContractKit = require('@celo/contractkit')
+const {sleep, when} = require('./utils')
 
 const nonceErrors = [
   'Returned error: Transaction nonce is too low. Try incrementing the nonce.',
@@ -29,17 +30,21 @@ const defaultConfig = {
 }
 
 class TxManager {
-  constructor({ privateKey, rpcUrl, broadcastNodes = [], config = {} }) {
-    this.config = Object.assign({ ...defaultConfig }, config)
+  constructor({privateKey, rpcUrl, broadcastNodes = [], config = {}}) {
+    this.config = Object.assign({...defaultConfig}, config)
     this._privateKey = '0x' + privateKey
     this._web3 = new Web3(rpcUrl)
+    this._kit = ContractKit.newKitFromWeb3(this._web3)
     this._broadcastNodes = broadcastNodes
-    this.address = this._web3.eth.accounts.privateKeyToAccount(this._privateKey).address
-    this._web3.eth.accounts.wallet.add(this._privateKey)
-    this._web3.eth.defaultAccount = this.address
-    this._gasPriceOracle = new GasPriceOracle({ defaultRpc: rpcUrl })
+    this._kit.connection.addAccount(this._privateKey)
+    this._gasPriceOracle = new GasPriceOracle({defaultRpc: rpcUrl})
     this._mutex = new Mutex()
     this._nonce = null
+  }
+
+  async init() {
+    const accounts = await this._kit.web3.eth.getAccounts()
+    this.address = accounts[0]
   }
 
   /**
@@ -56,7 +61,7 @@ class Transaction {
   constructor(tx, manager) {
     Object.assign(this, manager)
     this.manager = manager
-    this.tx = tx
+    this.tx = {...tx, from: manager.address}
     this._promise = PromiEvent()
     this._emitter = this._promise.eventEmitter
     this.executed = false
@@ -93,7 +98,7 @@ class Transaction {
       return
     }
     if (!tx.gas) {
-      tx.gas = await this._web3.eth.estimateGas(tx)
+      tx.gas = await this._kit.web3.eth.estimateGas(tx)
     }
     tx.nonce = this.tx.nonce // can be different from `this.manager._nonce`
     tx.gasPrice = Math.max(this.tx.gasPrice, tx.gasPrice || 0) // start no less than current tx gas price
@@ -143,7 +148,7 @@ class Transaction {
    * @private
    */
   async _prepare() {
-    const gas = await this._web3.eth.estimateGas(this.tx)
+    const gas = await this._kit.web3.eth.estimateGas(this.tx)
     if (!this.tx.gas) {
       this.tx.gas = gas
     }
@@ -151,7 +156,7 @@ class Transaction {
       this.tx.gasPrice = await this._getGasPrice('fast')
     }
     if (!this.manager._nonce) {
-      this.manager._nonce = await this._web3.eth.getTransactionCount(this.address, 'latest')
+      this.manager._nonce = await this._kit.web3.eth.getTransactionCount(this.address, 'latest')
     }
     this.tx.nonce = this.manager._nonce
   }
@@ -164,7 +169,7 @@ class Transaction {
    */
   async _send() {
     // todo throw is we attempt to send a tx that attempts to replace already mined tx
-    const signedTx = await this._web3.eth.accounts.signTransaction(this.tx, this._privateKey)
+    const signedTx = await this._kit.connection.sendTransaction(this.tx)
     this.submitTimestamp = Date.now()
     this.tx.hash = signedTx.transactionHash
     this.hashes.push(signedTx.transactionHash)
@@ -190,7 +195,7 @@ class Transaction {
     while (true) {
       // We are already waiting on certain tx hash
       if (this.currentTxHash) {
-        const receipt = await this._web3.eth.getTransactionReceipt(this.currentTxHash)
+        const receipt = await this._kit.web3.eth.getTransactionReceipt(this.currentTxHash)
 
         if (!receipt) {
           // We were waiting for some tx but it disappeared
@@ -199,7 +204,7 @@ class Transaction {
           continue
         }
 
-        const currentBlock = await this._web3.eth.getBlockNumber()
+        const currentBlock = await this._kit.web3.eth.getBlockNumber()
         const confirmations = Math.max(0, currentBlock - receipt.blockNumber)
         // todo don't emit repeating confirmation count
         this._emitter.emit('confirmations', confirmations)
@@ -264,7 +269,7 @@ class Transaction {
 
   async _getReceipts() {
     for (const hash of this.hashes.reverse()) {
-      const receipt = await this._web3.eth.getTransactionReceipt(hash)
+      const receipt = await this._kit.web3.eth.getTransactionReceipt(hash)
       if (receipt) {
         return receipt
       }
@@ -276,7 +281,7 @@ class Transaction {
    * Broadcasts tx to multiple nodes, waits for tx hash only on main node
    */
   _broadcast(rawTx) {
-    const main = this._web3.eth.sendSignedTransaction(rawTx)
+    const main = this._kit.web3.eth.sendSignedTransaction(rawTx)
     for (const node of this._broadcastNodes) {
       try {
         new Web3(node).eth.sendSignedTransaction(rawTx)
@@ -365,7 +370,7 @@ class Transaction {
    * @private
    */
   _getLastNonce() {
-    return this._web3.eth.getTransactionCount(this.address, 'latest')
+    return this._kit.web3.eth.getTransactionCount(this.address, 'latest')
   }
 }
 

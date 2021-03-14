@@ -82,6 +82,17 @@ let config = {
         decimals: 6,
       },
     },
+    netId44787: {
+      celo: {
+        instanceAddress: {
+          '0.1': '0xBdD116cF6B447d038B83b018a1E3f044163b6b44',
+          '1': '0xBdD116cF6B447d038B83b018a1E3f044163b6b44',
+        },
+        tokenAddress: "0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9",
+        symbol: 'CELO',
+        decimals: 18
+      },
+    },
     netId42: {
       eth: {
         instanceAddress: {

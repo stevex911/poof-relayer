@@ -29,6 +29,7 @@
     "why-is-node-running": "^2.2.0"
   },
   "devDependencies": {
+    "@celo/contractkit": "^1.0.2",
     "chai": "^4.2.0",
     "eslint": "^6.6.0",
     "mocha": "^8.1.3"
