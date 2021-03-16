@@ -169,16 +169,10 @@ class Transaction {
    */
   async _send() {
     // todo throw is we attempt to send a tx that attempts to replace already mined tx
-    const signedTx = await this._kit.connection.sendTransaction(this.tx)
+    const signedTx = await this._kit.sendTransaction(this.tx)
     this.submitTimestamp = Date.now()
-    this.tx.hash = signedTx.transactionHash
-    this.hashes.push(signedTx.transactionHash)
-
-    try {
-      await this._broadcast(signedTx.rawTransaction)
-    } catch (e) {
-      return this._handleSendError(e)
-    }
+    this.tx.hash = await signedTx.getHash()
+    this.hashes.push(this.tx.hash)
 
     this._emitter.emit('transactionHash', signedTx.transactionHash)
     console.log(`Broadcasted transaction ${signedTx.transactionHash}`)
@@ -275,21 +269,6 @@ class Transaction {
       }
     }
     return null
-  }
-
-  /**
-   * Broadcasts tx to multiple nodes, waits for tx hash only on main node
-   */
-  _broadcast(rawTx) {
-    const main = this._kit.web3.eth.sendSignedTransaction(rawTx)
-    for (const node of this._broadcastNodes) {
-      try {
-        new Web3(node).eth.sendSignedTransaction(rawTx)
-      } catch (e) {
-        console.log(`Failed to send transaction to node ${node}: ${e}`)
-      }
-    }
-    return when(main, 'transactionHash')
   }
 
   _handleSendError(e) {
