@@ -1,6 +1,6 @@
-const { instances, netId } = require('./config')
-const { poseidon } = require('circomlib')
-const { toBN, toChecksumAddress, BN } = require('web3-utils')
+const {instances, netId} = require('./config')
+const {poseidon} = require('circomlib')
+const {toBN, toChecksumAddress, BN} = require('web3-utils')
 
 const TORN_TOKEN = {
   tokenAddress: '0x77777FeDdddFfC19Ff86DB637967013e6C6A116C',
@@ -16,7 +16,7 @@ function getInstance(address) {
   for (const currency of Object.keys(inst)) {
     for (const amount of Object.keys(inst[currency].instanceAddress)) {
       if (inst[currency].instanceAddress[amount] === address) {
-        return { currency, amount }
+        return {currency, amount}
       }
     }
   }
@@ -64,7 +64,7 @@ function getArgsForOracle() {
       currencyLookup[data.tokenAddress] = currency
     }
   })
-  return { tokenAddresses, oneUintAmount, currencyLookup }
+  return {tokenAddresses, oneUintAmount, currencyLookup}
 }
 
 function fromDecimals(value, decimals) {
