@@ -1,7 +1,7 @@
 {
   "name": "relay",
   "version": "4.0.8",
-  "description": "Relayer for Tornado.cash privacy solution. https://tornado.cash",
+  "description": "Relayer for Poof.cash privacy solution. https://poof.cash",
   "scripts": {
     "server": "node src/server.js",
     "worker": "node src/worker",

@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { jobType } = require('./constants')
+const {jobType} = require('./constants')
 const tornConfig = require('torn-token')
 module.exports = {
   netId: Number(process.env.NET_ID) || 1,
@@ -14,7 +14,7 @@ module.exports = {
   privateKey: process.env.PRIVATE_KEY,
   instances: tornConfig.instances,
   torn: tornConfig,
-  port: process.env.APP_PORT || 8000,
+  port: process.env.PORT || 8000,
   tornadoServiceFee: Number(process.env.REGULAR_TORNADO_WITHDRAW_FEE),
   miningServiceFee: Number(process.env.MINING_SERVICE_FEE),
   rewardAccount: process.env.REWARD_ACCOUNT,
