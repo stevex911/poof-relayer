@@ -7,7 +7,6 @@ const {postJob} = require('./queue')
 const {jobType} = require('./constants')
 
 async function tornadoWithdraw(req, res) {
-  console.log(req.body)
   const inputError = getTornadoWithdrawInputError(req.body)
   if (inputError) {
     console.log('Invalid input:', inputError)
