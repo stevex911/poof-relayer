@@ -3,49 +3,50 @@ const {
   getMiningRewardInputError,
   getMiningWithdrawInputError,
 } = require('./validator')
-const { postJob } = require('./queue')
-const { jobType } = require('./constants')
+const {postJob} = require('./queue')
+const {jobType} = require('./constants')
 
 async function tornadoWithdraw(req, res) {
+  console.log(req.body)
   const inputError = getTornadoWithdrawInputError(req.body)
   if (inputError) {
     console.log('Invalid input:', inputError)
-    return res.status(400).json({ error: inputError })
+    return res.status(400).json({error: inputError})
   }
 
   const id = await postJob({
     type: jobType.TORNADO_WITHDRAW,
     request: req.body,
   })
-  return res.json({ id })
+  return res.json({id})
 }
 
 async function miningReward(req, res) {
   const inputError = getMiningRewardInputError(req.body)
   if (inputError) {
     console.log('Invalid input:', inputError)
-    return res.status(400).json({ error: inputError })
+    return res.status(400).json({error: inputError})
   }
 
   const id = await postJob({
     type: jobType.MINING_REWARD,
     request: req.body,
   })
-  return res.json({ id })
+  return res.json({id})
 }
 
 async function miningWithdraw(req, res) {
   const inputError = getMiningWithdrawInputError(req.body)
   if (inputError) {
     console.log('Invalid input:', inputError)
-    return res.status(400).json({ error: inputError })
+    return res.status(400).json({error: inputError})
   }
 
   const id = await postJob({
     type: jobType.MINING_WITHDRAW,
     request: req.body,
   })
-  return res.json({ id })
+  return res.json({id})
 }
 
 module.exports = {
