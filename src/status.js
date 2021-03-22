@@ -27,7 +27,7 @@ async function status(req, res) {
 
 function index(req, res) {
   res.send(
-    'This is <a href=https://poof.cash>poof.cash</a> Relayer service. Check the <a href=/v1/status>/status</a> for settings',
+    'This is a <a href=https://poof.cash>poof.cash</a> Relayer service. Check the <a href=/v1/status>/status</a> for settings',
   )
 }
 
