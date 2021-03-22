@@ -4178,10 +4178,10 @@ picomatch@^2.0.4, picomatch@^2.2.1:
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.2.2.tgz#21f333e9b6b8eaff02468f5146ea406d345f4dad"
   integrity sha512-q0M/9eZHzmr0AulXyPwNfZjtwZ/RBZlbN3K3CErVrk50T2ASYI7Bye0EvekFY3IP1Nt2DHu0re+V2ZHIpMkuWg==
 
-poof-token@1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/poof-token/-/poof-token-1.0.5.tgz#25e9c39be20ed1e0fa247fdbb97fe97d8f5ddb29"
-  integrity sha512-5HvnoPld8xZ0pDRV0IYhHp9WI6AL3xne03DqrsRrt/2ccJ51uaQsqjDiqqNr1zrDMwmq2uBGfw+hhuZ8akRUWw==
+poof-token@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/poof-token/-/poof-token-1.0.6.tgz#982dd4b5b390eed85f0d82cc35fe49d814ef3afa"
+  integrity sha512-XoNykc62Ibn2/w4ErYLtZtABBrMkndzvkUqRb0tbHwTaeP//3oHnlIFduPTaX7zk2dBBHYnZjAnI3MdtLA6Tgg==
   dependencies:
     "@openzeppelin/contracts" "^3.1.0"
     eth-sig-util "^2.5.3"

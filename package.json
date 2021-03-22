@@ -31,7 +31,7 @@
     "gas-price-oracle": "^0.2.2",
     "ioredis": "^4.14.1",
     "node-fetch": "^2.6.0",
-    "poof-token": "1.0.5",
+    "poof-token": "1.0.6",
     "tornado-cash-anonymity-mining": "^1.0.0",
     "@poofcash/tx-manager": "^0.3.0",
     "uuid": "^8.3.0",
