@@ -1,18 +1,16 @@
-# Relayer for Tornado Cash [![Build Status](https://github.com/tornadocash/relayer/workflows/build/badge.svg)](https://github.com/tornadocash/relayer/actions) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/tornadocash/relayer?logo=docker&logoColor=%23FFFFFF&sort=semver)](https://hub.docker.com/repository/docker/tornadocash/relayer)
+# Relayer for Poof Cash
 
-## Getting listed on app.tornado.cash
+## [WIP] Getting listed on app.poof.cash
 
-If you would like to be listed in tornado.cash UI relayer's dropdown option, please do the following:
+If you would like to be listed in poof.cash UI relayer's dropdown option, please do the following:
 
-1. Setup tornado.cash relayer node(see below for docker-compose.yml example)
-2. Setup ENS subdomain(`goerli-v2.xxx.eth`, `mainnet-v2.xxx.eth`) with TEXT record and URL key that points to your DNS or IP address.
-3. Test your relayer setup on Goerli testnet at https://app.tornado.cash by choosing custom relayer's option on withdraw tab. Enter your ens name and initiate a withdrawal.
-4. Open new Github issue in https://github.com/tornadocash/tornado-relayer/issues and specify the following:
+1. Setup poof.cash relayer node
+2. Try using your custom relayer in the UI for both alfajores and mainnet (TODO: This does not exist today)
+3. Open new Github issue in https://github.com/poofcash/tornado-relayer/issues and specify the following:
 
-- your goerli ens url
-- your mainnet ens url
+- your relayer URL
 - your telegram handle
-- withdrawal tx on goerli
+- withdrawal tx on alfajores
 - withdrawal tx on mainnet
 
 Please choose your testnet relayer's fee wisely.
@@ -21,7 +19,7 @@ Disclaimer: Please consult with legal and tax advisors regarding the compliance 
 
 USE AT YOUR OWN RISK.
 
-## Deploy with docker-compose
+## [WIP] Deploy with docker-compose
 
 docker-compose.yml contains a stack that will automatically provision SSL certificates for your domain name and will add a https redirect to port 80.
 
@@ -67,7 +65,7 @@ curl -X POST -H 'content-type:application/json' --data '<input data>' http://127
 Relayer should return a transaction hash
 
 In that case you will need to add https termination yourself because browsers with default settings will prevent https
-tornado.cash UI from submitting your request over http connection
+poof.cash UI from submitting your request over http connection
 
 ## Architecture
 
