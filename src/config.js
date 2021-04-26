@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const {jobType} = require('./constants')
-const poofConfig = require('poof-token')
+const poofConfig = require('@poofcash/poof-token')
 module.exports = {
   netId: Number(process.env.NET_ID) || 1,
   redisUrl: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
