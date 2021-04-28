@@ -26,7 +26,7 @@ wget https://raw.githubusercontent.com/poofcash/poof-relayer/master/.env.example
    - set `ORACLE_RPC_URL` - rpc url for mainnet node for fetching prices (always have to be on mainnet). E.g. https://forno.celo.org
    - set `PRIVATE_KEY` for your relayer address (without 0x prefix)
    - set `VIRTUAL_HOST` and `LETSENCRYPT_HOST` to your domain and add DNS record pointing to your relayer ip address
-   - set `REGULAR_TORNADO_WITHDRAW_FEE` - fee in % that is used for Poof privacy contract withdrawals. E.g. 0.01 is a 0.01% fee
+   - set `REGULAR_POOF_WITHDRAW_FEE` - fee in % that is used for Poof privacy contract withdrawals. E.g. 0.01 is a 0.01% fee
    - set `MINING_SERVICE_FEE` - fee in % that is used for mining AP withdrawals. E.g. 0.01 is a 0.01% fee
    - set `REWARD_ACCOUNT` - celo address that is used to collect fees.
    - update `AGGREGATOR` if needed - Contract address of aggregator instance.

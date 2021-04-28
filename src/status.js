@@ -1,5 +1,5 @@
 const queue = require('./queue')
-const {netId, tornadoServiceFee, miningServiceFee, instances, redisUrl, rewardAccount} = require('./config')
+const {netId, poofServiceFee, miningServiceFee, instances, redisUrl, rewardAccount} = require('./config')
 const {version} = require('../package.json')
 const Redis = require('ioredis')
 const redis = new Redis(redisUrl)
@@ -17,7 +17,7 @@ async function status(req, res) {
     netId,
     celoPrices,
     gasPrices,
-    tornadoServiceFee,
+    poofServiceFee,
     miningServiceFee,
     version,
     health,

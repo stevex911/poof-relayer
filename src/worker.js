@@ -105,7 +105,7 @@ async function start() {
 }
 
 function checkFee({data}) {
-  if (data.type === jobType.TORNADO_WITHDRAW) {
+  if (data.type === jobType.POOF_WITHDRAW) {
     return checkTornadoFee(data)
   }
   return checkMiningFee(data)
@@ -118,7 +118,7 @@ async function checkTornadoFee({args, contract}) {
   const gasPrice = await redis.hget('gasPrices', 1.3)
 
   const celoPrice = await redis.hget('prices', currency)
-  const expense = toBN(toWei(gasPrice.toString(), 'gwei')).mul(toBN(gasLimits[jobType.TORNADO_WITHDRAW]))
+  const expense = toBN(toWei(gasPrice.toString(), 'gwei')).mul(toBN(gasLimits[jobType.POOF_WITHDRAW]))
   const feePercent = toBN(fromDecimals(amount, decimals))
     .mul(toBN(tornadoServiceFee * 1e10))
     .div(toBN(1e10 * 100))
@@ -181,7 +181,7 @@ async function checkMiningFee({args}) {
 }
 
 function getTxObject({data}) {
-  if (data.type === jobType.TORNADO_WITHDRAW) {
+  if (data.type === jobType.POOF_WITHDRAW) {
     let contract, calldata
     if (getInstance(data.contract).currency === 'eth') {
       contract = proxyContract
@@ -239,7 +239,7 @@ async function submitTx(job, retry = 0) {
   await checkFee(job)
   currentTx = await txManager.createTx(getTxObject(job))
 
-  if (job.data.type !== jobType.TORNADO_WITHDRAW) {
+  if (job.data.type !== jobType.POOF_WITHDRAW) {
     await fetchTree()
   }
 
@@ -251,7 +251,7 @@ async function submitTx(job, retry = 0) {
     if (receipt.status) {
       await updateStatus(status.CONFIRMED)
     } else {
-      if (job.data.type !== jobType.TORNADO_WITHDRAW && (await isOutdatedTreeRevert(receipt, currentTx))) {
+      if (job.data.type !== jobType.POOF_WITHDRAW && (await isOutdatedTreeRevert(receipt, currentTx))) {
         if (retry < 3) {
           await updateStatus(status.RESUBMITTED)
           await submitTx(job, retry + 1)
@@ -266,7 +266,7 @@ async function submitTx(job, retry = 0) {
     // todo this could result in duplicated error logs
     // todo handle a case where account tree is still not up to date (wait and retry)?
     if (
-      job.data.type !== jobType.TORNADO_WITHDRAW &&
+      job.data.type !== jobType.POOF_WITHDRAW &&
       (e.message.indexOf('Outdated account merkle root') !== -1 ||
         e.message.indexOf('Outdated tree update merkle root') !== -1)
     ) {

@@ -15,11 +15,11 @@ module.exports = {
   instances: poofConfig.instances,
   torn: poofConfig,
   port: process.env.PORT || 8000,
-  tornadoServiceFee: Number(process.env.REGULAR_TORNADO_WITHDRAW_FEE),
+  poofServiceFee: Number(process.env.REGULAR_POOF_WITHDRAW_FEE),
   miningServiceFee: Number(process.env.MINING_SERVICE_FEE),
   rewardAccount: process.env.REWARD_ACCOUNT,
   gasLimits: {
-    [jobType.TORNADO_WITHDRAW]: 350000,
+    [jobType.POOF_WITHDRAW]: 350000,
     [jobType.MINING_REWARD]: 455000,
     [jobType.MINING_WITHDRAW]: 400000,
   },

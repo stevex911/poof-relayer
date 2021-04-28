@@ -16,7 +16,7 @@
     "test": "mocha",
     "start": "yarn server & yarn gasWatcher & yarn priceWatcher & yarn treeWatcher & yarn worker & yarn healthWatcher"
   },
-  "author": "tornado.cash",
+  "author": "poof.cash",
   "license": "MIT",
   "dependencies": {
     "@celo/contractkit": "^1.0.2",

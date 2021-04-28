@@ -14,7 +14,7 @@ async function tornadoWithdraw(req, res) {
   }
 
   const id = await postJob({
-    type: jobType.TORNADO_WITHDRAW,
+    type: jobType.POOF_WITHDRAW,
     request: req.body,
   })
   return res.json({id})
