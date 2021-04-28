@@ -1,51 +1,39 @@
 # Relayer for Poof Cash
 
-## [WIP] Getting listed on app.poof.cash
+## Getting listed on app.poof.cash
 
-If you would like to be listed in poof.cash UI relayer's dropdown option, please do the following:
+If you would like to be listed in poof.cash UI relayer's dropdown option, see the [interface repo](https://github.com/poofcash/poofcash)
 
-1. Setup poof.cash relayer node
-2. Try using your custom relayer in the UI for both alfajores and mainnet (TODO: This does not exist today)
-3. Open new Github issue in https://github.com/poofcash/tornado-relayer/issues and specify the following:
+## Deploy with docker-compose
 
-- your relayer URL
-- your telegram handle
-- withdrawal tx on alfajores
-- withdrawal tx on mainnet
-
-Please choose your testnet relayer's fee wisely.
-
-Disclaimer: Please consult with legal and tax advisors regarding the compliance of running a relayer service in your jurisdiction. The authors of this project bear no responsibility.
-
-USE AT YOUR OWN RISK.
-
-## [WIP] Deploy with docker-compose
+docker-compose.test.yml contains a stack that will run the relayer locally on port 8000
 
 docker-compose.yml contains a stack that will automatically provision SSL certificates for your domain name and will add a https redirect to port 80.
 
 1. Download [docker-compose.yml](/docker-compose.yml) and [.env.example](/.env.example)
 
 ```
-wget https://raw.githubusercontent.com/tornadocash/tornado-relayer/master/docker-compose.yml
-wget https://raw.githubusercontent.com/tornadocash/tornado-relayer/master/.env.example -O .env
+# wget https://raw.githubusercontent.com/poofcash/poof-relayer/master/docker-compose.test.yml
+wget https://raw.githubusercontent.com/poofcash/poof-relayer/master/docker-compose.yml
+wget https://raw.githubusercontent.com/poofcash/poof-relayer/master/.env.example -O .env
 ```
 
 2. Setup environment variables
 
-   - set `NET_ID` (1 for mainnet, 5 for Goerli)
-   - set `HTTP_RPC_URL` rpc url for your ethereum node
-   - set `WS_RPC_URL` websocket url
-   - set `ORACLE_RPC_URL` - rpc url for mainnet node for fetching prices(always have to be on mainnet)
+   - set `NET_ID` (42220 for mainnet, 44787 for Alfajores)
+   - set `HTTP_RPC_URL` rpc url for your celo node. E.g. https://forno.celo.org
+   - set `WS_RPC_URL` websocket url. E.g. wss://forno.celo.org/ws
+   - set `ORACLE_RPC_URL` - rpc url for mainnet node for fetching prices (always have to be on mainnet). E.g. https://forno.celo.org
    - set `PRIVATE_KEY` for your relayer address (without 0x prefix)
    - set `VIRTUAL_HOST` and `LETSENCRYPT_HOST` to your domain and add DNS record pointing to your relayer ip address
-   - set `REGULAR_TORNADO_WITHDRAW_FEE` - fee in % that is used for tornado pool withdrawals
-   - set `MINING_SERVICE_FEE` - fee in % that is used for mining AP withdrawals
-   - set `REWARD_ACCOUNT` - eth address that is used to collect fees
+   - set `REGULAR_TORNADO_WITHDRAW_FEE` - fee in % that is used for Poof privacy contract withdrawals. E.g. 0.01 is a 0.01% fee
+   - set `MINING_SERVICE_FEE` - fee in % that is used for mining AP withdrawals. E.g. 0.01 is a 0.01% fee
+   - set `REWARD_ACCOUNT` - celo address that is used to collect fees.
    - update `AGGREGATOR` if needed - Contract address of aggregator instance.
    - update `CONFIRMATIONS` if needed - how many block confirmations to wait before processing an event. Not recommended to set less than 3
    - update `MAX_GAS_PRICE` if needed - maximum value of gwei value for relayer's transaction
 
-     If you want to use more than 1 eth address for relaying transactions, please add as many `workers` as you want. For example, you can comment out `worker2` in docker-compose.yml file, but please use a different `PRIVATE_KEY` for each worker.
+     If you want to use more than 1 celo address for relaying transactions, please add as many `workers` as you want. For example, you can comment out `worker2` in docker-compose.yml file, but please use a different `PRIVATE_KEY` for each worker.
 
 3. Run `docker-compose up -d`
 
