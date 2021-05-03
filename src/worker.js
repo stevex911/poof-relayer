@@ -23,7 +23,7 @@ const {
   gasLimits,
   instances,
   oracleRpcUrl,
-  tornadoServiceFee,
+  poofServiceFee,
   miningServiceFee,
 } = require('./config')
 const ENSResolver = require('./resolver')
@@ -120,7 +120,7 @@ async function checkTornadoFee({args, contract}) {
   const celoPrice = await redis.hget('prices', currency)
   const expense = toBN(toWei(gasPrice.toString(), 'gwei')).mul(toBN(gasLimits[jobType.POOF_WITHDRAW]))
   const feePercent = toBN(fromDecimals(amount, decimals))
-    .mul(toBN(tornadoServiceFee * 1e10))
+    .mul(toBN(poofServiceFee * 1e10))
     .div(toBN(1e10 * 100))
   let desiredFee
   switch (currency) {
