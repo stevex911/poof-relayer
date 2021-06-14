@@ -13,7 +13,7 @@ module.exports = {
   minerMerkleTreeHeight: 20,
   privateKey: process.env.PRIVATE_KEY,
   instances: poofConfig.instances,
-  torn: poofConfig,
+  poof: poofConfig,
   port: process.env.PORT || 8000,
   poofServiceFee: Number(process.env.REGULAR_POOF_WITHDRAW_FEE),
   miningServiceFee: Number(process.env.MINING_SERVICE_FEE),

@@ -2,23 +2,38 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "_torn",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "_poof",
+        "type": "address"
       },
       {
-        "internalType": "bytes32",
+        "internalType": "address",
         "name": "_miner",
-        "type": "bytes32"
+        "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "_miningCap",
+        "name": "_startTimestamp",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_initialLiquidity",
+        "name": "_periodDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_firstPeriodDistribution",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_totalHalvenings",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_poolWeight",
         "type": "uint256"
       }
     ],
@@ -50,13 +65,13 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "pTORN",
+        "name": "pPOOF",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "TORN",
+        "name": "POOF",
         "type": "uint256"
       }
     ],
@@ -64,8 +79,14 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "DURATION",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "cumulativeTokensPerPeriod",
     "outputs": [
       {
         "internalType": "uint256",
@@ -78,7 +99,7 @@
   },
   {
     "inputs": [],
-    "name": "initialLiquidity",
+    "name": "endTimestamp",
     "outputs": [
       {
         "internalType": "uint256",
@@ -90,8 +111,33 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "liquidity",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "fromTimestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCumulativeTokens",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPeriod",
     "outputs": [
       {
         "internalType": "uint256",
@@ -117,7 +163,46 @@
   },
   {
     "inputs": [],
+    "name": "periodDuration",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "poof",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "poolWeight",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "startTimestamp",
     "outputs": [
       {
         "internalType": "uint256",
@@ -131,25 +216,12 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "node",
-        "type": "bytes32"
-      }
-    ],
-    "name": "resolve",
-    "outputs": [
-      {
-        "internalType": "address",
+        "internalType": "uint256",
         "name": "",
-        "type": "address"
+        "type": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "startTimestamp",
+    "name": "tokensPerPeriod",
     "outputs": [
       {
         "internalType": "uint256",
@@ -175,12 +247,12 @@
   },
   {
     "inputs": [],
-    "name": "torn",
+    "name": "totalPeriods",
     "outputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "uint256",
         "name": "",
-        "type": "address"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -190,17 +262,23 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "recipient",
+        "name": "_recipient",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "_amount",
         "type": "uint256"
       }
     ],
     "name": "swap",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -208,7 +286,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "_amount",
         "type": "uint256"
       }
     ],
@@ -225,7 +303,7 @@
   },
   {
     "inputs": [],
-    "name": "tornVirtualBalance",
+    "name": "poofVirtualBalance",
     "outputs": [
       {
         "internalType": "uint256",
@@ -240,13 +318,26 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "newWeight",
+        "name": "_newWeight",
         "type": "uint256"
       }
     ],
     "name": "setPoolWeight",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]
