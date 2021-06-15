@@ -45,7 +45,7 @@ const bytes32Type = { type: 'string', pattern: '^0x[a-fA-F0-9]{64}$' }
 const instanceType = { ...addressType, isKnownContract: true }
 const relayerType = { ...addressType, isFeeRecipient: true }
 
-const tornadoWithdrawSchema = {
+const poofWithdrawSchema = {
   type: 'object',
   properties: {
     proof: proofType,
@@ -168,7 +168,7 @@ const miningWithdrawSchema = {
   required: ['proof', 'args'],
 }
 
-const validateTornadoWithdraw = ajv.compile(tornadoWithdrawSchema)
+const validateTornadoWithdraw = ajv.compile(poofWithdrawSchema)
 const validateMiningReward = ajv.compile(miningRewardSchema)
 const validateMiningWithdraw = ajv.compile(miningWithdrawSchema)
 

@@ -6,7 +6,7 @@ const {
 const {postJob} = require('./queue')
 const {jobType} = require('./constants')
 
-async function tornadoWithdraw(req, res) {
+async function poofWithdraw(req, res) {
   const inputError = getTornadoWithdrawInputError(req.body)
   if (inputError) {
     console.log('Invalid input:', inputError)
@@ -49,7 +49,7 @@ async function miningWithdraw(req, res) {
 }
 
 module.exports = {
-  tornadoWithdraw,
+  poofWithdraw,
   miningReward,
   miningWithdraw,
 }
