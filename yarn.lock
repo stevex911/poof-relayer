@@ -632,10 +632,10 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.1.0.tgz#baec89a7f5f73e3d8ea582a78f1980134b605375"
   integrity sha512-TihZitscnaHNcZgXGj9zDLDyCqjziytB4tMCwXq0XimfWkAjBYyk5/pOsDbbwcavhlc79HhpTEpQcrMnPVa1mw==
 
-"@poofcash/poof-token@1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@poofcash/poof-token/-/poof-token-1.0.4.tgz#f4e186e042aafb78f3b19c51432a29ec4137834f"
-  integrity sha512-moHjytWlZXWDbSwZF8yZu6RAtmr4TS4vYfbW9jIvVIjjzZOXCgt9629u92hsHmQ415opC+T/c8RTuj2foA7g2g==
+"@poofcash/poof-token@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@poofcash/poof-token/-/poof-token-1.0.5.tgz#b575f846beafc9c1a39fd390114079fac7105ed7"
+  integrity sha512-EdahBwcClxwoYLxoMsKyb6VkdcxLgPxP7BNRLsQypYxXRSWLnMXSc1l43AqNF9SeLvmRX+fGCjvx0Jva+d1eDA==
   dependencies:
     "@nomspace/nomspace" "^1.0.3"
     "@openzeppelin/contracts" "^4.1.0"
