@@ -1,9 +1,9 @@
 require('dotenv').config()
 
 const {jobType} = require('./constants')
-const poofConfig = require('@poofcash/poof-token')
+const {deployments, alfajoresAddresses, mainnetAddresses} = require('@poofcash/poof-kit')
 module.exports = {
-  netId: Number(process.env.NET_ID) || 1,
+  netId: Number(process.env.NET_ID) || 42220,
   redisUrl: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
   httpRpcUrl: process.env.HTTP_RPC_URL,
   wsRpcUrl: process.env.WS_RPC_URL,
@@ -12,8 +12,8 @@ module.exports = {
   aggregatorAddress: process.env.AGGREGATOR,
   minerMerkleTreeHeight: 20,
   privateKey: process.env.PRIVATE_KEY,
-  instances: poofConfig.instances,
-  poof: poofConfig,
+  instances: deployments,
+  poof: process.env.NET_ID === "42220" ? mainnetAddresses : alfajoresAddresses,
   port: process.env.PORT || 8000,
   poofServiceFee: Number(process.env.REGULAR_POOF_WITHDRAW_FEE),
   miningServiceFee: Number(process.env.MINING_SERVICE_FEE),

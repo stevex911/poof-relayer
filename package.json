@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@celo/contractkit": "^1.0.2",
+    "@poofcash/poof-kit": "^1.0.8",
     "ajv": "^6.12.5",
     "async-mutex": "^0.2.4",
     "bull": "^3.12.1",
@@ -31,7 +32,6 @@
     "gas-price-oracle": "^0.2.2",
     "ioredis": "^4.14.1",
     "node-fetch": "^2.6.0",
-    "@poofcash/poof-token": "^1.0.6",
     "tornado-cash-anonymity-mining": "^1.0.0",
     "@poofcash/tx-manager": "^0.3.0",
     "uuid": "^8.3.0",

@@ -58,7 +58,7 @@ async function fetchTree() {
 
     const update = await controller.treeUpdate(args.account.outputCommitment, tree)
 
-    const minerAddress = await resolver.resolve(poof.miningV2.address)
+    const minerAddress = await resolver.resolve(poof.PoofMiner.address)
     const instance = new kit.web3.eth.Contract(miningABI, minerAddress)
     const data =
       currentJob.data.type === 'MINING_REWARD'
@@ -83,9 +83,9 @@ async function start() {
       config: { CONFIRMATIONS, MAX_GAS_PRICE, THROW_ON_REVERT: false },
     })
     await txManager.init()
-    swap = new kit.web3.eth.Contract(swapABI, poof.rewardSwap.address)
-    minerContract = new kit.web3.eth.Contract(miningABI, poof.miningV2.address)
-    proxyContract = new kit.web3.eth.Contract(tornadoProxyABI, poof.tornadoProxy.address)
+    swap = new kit.web3.eth.Contract(swapABI, poof.PoofRewardSwap.address)
+    minerContract = new kit.web3.eth.Contract(miningABI, poof.PoofMiner.address)
+    proxyContract = new kit.web3.eth.Contract(tornadoProxyABI, poof.PoofProxy.address)
     redisSubscribe.subscribe('treeUpdate', fetchTree)
     await fetchTree()
     const provingKeys = {

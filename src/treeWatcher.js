@@ -99,7 +99,7 @@ async function rebuild() {
 async function init() {
   try {
     console.log('Initializing')
-    const miner = poof.miningV2.address
+    const miner = poof.PoofMiner.address
     contract = new web3.eth.Contract(MinerABI, miner)
     const block = await web3.eth.getBlockNumber()
     const events = await fetchEvents(0, block)
