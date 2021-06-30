@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@celo/contractkit": "^1.0.2",
-    "@poofcash/poof-kit": "^1.0.8",
+    "@poofcash/poof-kit": "^1.0.9",
     "ajv": "^6.12.5",
     "async-mutex": "^0.2.4",
     "bull": "^3.12.1",
