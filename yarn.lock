@@ -473,10 +473,10 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
-"@poofcash/poof-kit@^1.0.9":
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/@poofcash/poof-kit/-/poof-kit-1.0.9.tgz#0fdbef9e4a8ccda14faf363091360961ac0bd6d2"
-  integrity sha512-vqoIg+UFB3pkqWaBTJZOh0/mOTovLNwfiAszW3nUcf0C+ul5kLYUfa7IYpaVZWXfDDyvsDHBU8sKnm4StO6KhA==
+"@poofcash/poof-kit@^1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@poofcash/poof-kit/-/poof-kit-1.0.12.tgz#5c5fd1c65b4ed686469bda4afbd4e506c0df389c"
+  integrity sha512-r6E1nV9QD7m4VfnmSl6OTtq2iZu/vz5lCA8qiFMX4hv4ek15TQhSoC5xdd5TD6qLmk74oa0MB7qdlMFKY26DDA==
   dependencies:
     "@celo/contractkit" "^1.1.0"
     "@types/bn.js" "^5.1.0"

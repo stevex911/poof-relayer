@@ -28,6 +28,7 @@ const {
 const ENSResolver = require('./resolver')
 const resolver = new ENSResolver()
 const { TxManager } = require('@poofcash/tx-manager')
+const { calculateFee } = require('@poofcash/poof-kit')
 
 let kit
 let currentTx
@@ -115,13 +116,19 @@ async function checkPoofFee({ args, contract }) {
   const gasPrice = await redis.hget('gasPrices', 1.3)
 
   const celoPrice = await redis.hget('prices', currency)
-  const expense = toBN(toWei(gasPrice.toString(), 'gwei')).mul(toBN(gasLimits[jobType.POOF_WITHDRAW]))
   const feePercent = toBN(fromDecimals(amount, decimals))
     .mul(toBN(poofServiceFee * 1e10))
     .div(toBN(1e10 * 100))
 
-  const desiredFee = expense.add(refund).div(toBN(celoPrice)).add(feePercent)
-
+  const desiredFee = calculateFee(
+    gasPrice.toString(),
+    amount.toString(),
+    refund.toString(),
+    celoPrice.toString(),
+    poofServiceFee.toString(),
+    decimals,
+    gasLimits[jobType.POOF_WITHDRAW],
+  )
   console.log(
     'sent fee, desired fee, feePercent',
     fromWei(fee.toString()),
