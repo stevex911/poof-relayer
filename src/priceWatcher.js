@@ -18,8 +18,8 @@ const {toBN} = require('web3-utils')
 
 async function main() {
   try {
-    // TODO: poof price
-    const celoPrices = {'celo': 1.0, 'poof': 1.0}
+    // TODO: poof price, rcelo price
+    const celoPrices = {'celo': 1.0, 'poof': 1.0, 'rcelo': 0.00015384615}
     // for (let i = 0; i < tokenAddresses.length; i++) {
     //   try {
     //     const price = await offchainOracle.methods
