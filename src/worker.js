@@ -7,6 +7,7 @@ const Redis = require('ioredis')
 const { GasPriceOracle } = require('gas-price-oracle')
 const { Utils, Controller } = require('tornado-cash-anonymity-mining')
 
+const tornadoABI = require('../abis/tornadoABI.json')
 const tornadoProxyABI = require('../abis/tornadoProxyABI.json')
 const miningABI = require('../abis/mining.abi.json')
 const swapABI = require('../abis/swap.abi.json')
@@ -28,7 +29,7 @@ const {
 const ENSResolver = require('./resolver')
 const resolver = new ENSResolver()
 const { TxManager } = require('@poofcash/tx-manager')
-const { calculateFee, calculateRewardFee, calculateSwapFee } = require('@poofcash/poof-kit')
+const { calculateFee, calculateRewardFee, calculateSwapFee, deployments } = require('@poofcash/poof-kit')
 
 let kit
 let currentTx
@@ -103,7 +104,7 @@ async function start() {
 }
 
 function checkFee({ data }) {
-  if (data.type === jobType.POOF_WITHDRAW) {
+  if (data.type === jobType.POOF_WITHDRAW || data.type === jobType.RELAY) {
     return checkPoofFee(data)
   }
   return checkMiningFee(data)
@@ -162,10 +163,15 @@ async function checkMiningFee({ args }) {
 }
 
 function getTxObject({ data }) {
-  if (data.type === jobType.POOF_WITHDRAW) {
+  if (data.type === jobType.POOF_WITHDRAW || data.type === jobType.RELAY) {
     let contract, calldata
-    contract = proxyContract
-    calldata = contract.methods.withdraw(data.contract, data.proof, ...data.args).encodeABI()
+    if (data.type === jobType.POOF_WITHDRAW) {
+      contract = proxyContract
+      calldata = contract.methods.withdraw(data.contract, data.proof, ...data.args).encodeABI()
+    } else {
+      contract = new kit.web3.eth.Contract(tornadoABI, data.contract)
+      calldata = contract.methods.withdraw(data.proof, ...data.args).encodeABI()
+    }
     return {
       value: data.args[5],
       to: contract._address,
@@ -215,7 +221,8 @@ async function submitTx(job, retry = 0) {
   await checkFee(job)
   currentTx = await txManager.createTx(getTxObject(job))
 
-  if (job.data.type !== jobType.POOF_WITHDRAW) {
+  const isWithdraw = job.data.type === jobType.POOF_WITHDRAW || job.data.type === jobType.RELAY
+  if (!isWithdraw) {
     await fetchTree()
   }
 
@@ -227,7 +234,7 @@ async function submitTx(job, retry = 0) {
     if (receipt.status) {
       await updateStatus(status.CONFIRMED)
     } else {
-      if (job.data.type !== jobType.POOF_WITHDRAW && (await isOutdatedTreeRevert(receipt, currentTx))) {
+      if (!isWithdraw && (await isOutdatedTreeRevert(receipt, currentTx))) {
         if (retry < 3) {
           await updateStatus(status.RESUBMITTED)
           await submitTx(job, retry + 1)
@@ -242,7 +249,7 @@ async function submitTx(job, retry = 0) {
     // todo this could result in duplicated error logs
     // todo handle a case where account tree is still not up to date (wait and retry)?
     if (
-      job.data.type !== jobType.POOF_WITHDRAW &&
+      !isWithdraw &&
       (e.message.indexOf('Outdated account merkle root') !== -1 ||
         e.message.indexOf('Outdated tree update merkle root') !== -1)
     ) {

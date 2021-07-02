@@ -29,7 +29,7 @@ app.get('/v1/status', status.status)
 app.get('/v1/jobs/:id', status.getJob)
 app.post('/v1/poofWithdraw', controller.poofWithdraw)
 app.get('/status', status.status)
-app.post('/relay', controller.poofWithdraw)
+app.post('/relay', controller.relay)
 app.post('/v1/miningReward', controller.miningReward)
 app.post('/v1/miningWithdraw', controller.miningWithdraw)
 

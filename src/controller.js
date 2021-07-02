@@ -6,6 +6,20 @@ const {
 const {postJob} = require('./queue')
 const {jobType} = require('./constants')
 
+async function relay(req, res) {
+  const inputError = getTornadoWithdrawInputError(req.body)
+  if (inputError) {
+    console.log('Invalid input:', inputError)
+    return res.status(400).json({ error: inputError })
+  }
+
+  const id = await postJob({
+    type: jobType.RELAY,
+    request: req.body,
+  })
+  return res.json({ id })
+}
+
 async function poofWithdraw(req, res) {
   const inputError = getTornadoWithdrawInputError(req.body)
   if (inputError) {
@@ -49,6 +63,7 @@ async function miningWithdraw(req, res) {
 }
 
 module.exports = {
+  relay,
   poofWithdraw,
   miningReward,
   miningWithdraw,
