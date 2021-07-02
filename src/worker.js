@@ -28,7 +28,7 @@ const {
 const ENSResolver = require('./resolver')
 const resolver = new ENSResolver()
 const { TxManager } = require('@poofcash/tx-manager')
-const { calculateFee } = require('@poofcash/poof-kit')
+const { calculateFee, calculateRewardFee, calculateSwapFee } = require('@poofcash/poof-kit')
 
 let kit
 let currentTx
@@ -113,7 +113,7 @@ async function checkPoofFee({ args, contract }) {
   const { currency, amount } = getInstance(contract)
   const { decimals } = instances[`netId${netId}`][currency]
   const [fee, refund] = [args[4], args[5]].map(toBN)
-  const gasPrice = await redis.hget('gasPrices', 1.3)
+  const gasPrice = await redis.hget('gasPrices', 'min')
 
   const celoPrice = await redis.hget('prices', currency)
   const feePercent = toBN(fromDecimals(amount, decimals))
@@ -141,36 +141,24 @@ async function checkPoofFee({ args, contract }) {
 }
 
 async function checkMiningFee({ args }) {
-  return true // TODO remove
-  // const fast = await gasPriceOracle.gasPrices()[1.3]
-  // const celoPrice = await redis.hget('prices', 'poof')
-  // const isMiningReward = currentJob.data.type === jobType.MINING_REWARD
-  // const providedFee = isMiningReward ? toBN(args.fee) : toBN(args.extData.fee)
+  const gasPrice = await redis.hget('gasPrices', 'min')
+  const celoPrice = await redis.hget('prices', 'poof')
+  const isMiningReward = currentJob.data.type === jobType.MINING_REWARD
+  const providedFee = isMiningReward ? toBN(args.fee) : toBN(args.extData.fee)
+  const balance = await swap.methods.poofVirtualBalance().call()
+  const poolWeight = await swap.methods.poolWeight().call()
 
-  // const expense = toBN(toWei(fast.toString(), 'gwei')).mul(toBN(gasLimits[currentJob.data.type]))
-  // const expenseInPoof = Number(celoPrice) < 1 ? expense.mul(1 / celoPrice) : expense.div(toBN(celoPrice))
-  // // todo make aggregator for celoPrices and rewardSwap data
-  // const balance = await swap.methods.poofVirtualBalance().call()
-  // const poolWeight = await swap.methods.poolWeight().call()
-  // const expenseInPoints = Utils.reverseTornadoFormula({ balance, tokens: expenseInPoof, poolWeight })
-  // /* eslint-disable */
-  // const serviceFeePercent = isMiningReward
-  //   ? toBN(0)
-  //   : toBN(args.amount)
-  //       .sub(providedFee) // args.amount includes fee
-  //       .mul(toBN(miningServiceFee * 1e10))
-  //       .div(toBN(1e10 * 100))
-  // /* eslint-enable */
-  // const desiredFee = expenseInPoints.add(serviceFeePercent) // in points
-  // console.log(
-  //   'user provided fee, desired fee, serviceFeePercent',
-  //   providedFee.toString(),
-  //   desiredFee.toString(),
-  //   serviceFeePercent.toString(),
-  // )
-  // if (toBN(providedFee).lt(desiredFee)) {
-  //   throw new Error('Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.')
-  // }
+  let desiredFee
+  if (isMiningReward) {
+    desiredFee = calculateRewardFee(gasPrice, celoPrice, balance, poolWeight)
+  } else {
+    desiredFee = calculateSwapFee(gasPrice, celoPrice, balance, poolWeight, miningServiceFee, args.amount)
+  }
+
+  console.log('user provided fee, desired fee', providedFee.toString(), desiredFee.toString())
+  if (toBN(providedFee).lt(desiredFee)) {
+    throw new Error('Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.')
+  }
 }
 
 function getTxObject({ data }) {
