@@ -28,14 +28,13 @@ const {
 } = require('./config')
 const ENSResolver = require('./resolver')
 const resolver = new ENSResolver()
-const { TxManager } = require('@poofcash/tx-manager')
-const { calculateFee, calculateRewardFee, calculateSwapFee, deployments } = require('@poofcash/poof-kit')
+const { calculateFee, calculateRewardFee, calculateSwapFee } = require('@poofcash/poof-kit')
 
 let kit
+let account
 let currentTx
 let currentJob
 let tree
-let txManager
 let controller
 let swap
 let minerContract
@@ -78,13 +77,8 @@ async function start() {
   try {
     const web3 = new Web3(httpRpcUrl)
     kit = ContractKit.newKitFromWeb3(web3)
-    const { CONFIRMATIONS, MAX_GAS_PRICE } = process.env
-    txManager = new TxManager({
-      privateKey,
-      rpcUrl: httpRpcUrl,
-      config: { CONFIRMATIONS, MAX_GAS_PRICE, THROW_ON_REVERT: false },
-    })
-    await txManager.init()
+    kit.connection.addAccount(privateKey)
+    account = (await kit.web3.eth.getAccounts())[0]
     swap = new kit.web3.eth.Contract(swapABI, poof.PoofRewardSwap.address)
     minerContract = new kit.web3.eth.Contract(miningABI, poof.PoofMiner.address)
     proxyContract = new kit.web3.eth.Contract(tornadoProxyABI, poof.PoofProxy.address)
@@ -164,26 +158,15 @@ async function checkMiningFee({ args }) {
 
 function getTxObject({ data }) {
   if (data.type === jobType.POOF_WITHDRAW || data.type === jobType.RELAY) {
-    let contract, calldata
     if (data.type === jobType.POOF_WITHDRAW) {
-      contract = proxyContract
-      calldata = contract.methods.withdraw(data.contract, data.proof, ...data.args).encodeABI()
+      return proxyContract.methods.withdraw(data.contract, data.proof, ...data.args)
     } else {
-      contract = new kit.web3.eth.Contract(tornadoABI, data.contract)
-      calldata = contract.methods.withdraw(data.proof, ...data.args).encodeABI()
-    }
-    return {
-      value: data.args[5],
-      to: contract._address,
-      data: calldata,
+      const contract = new kit.web3.eth.Contract(tornadoABI, data.contract)
+      return contract.methods.withdraw(data.proof, ...data.args)
     }
   } else {
     const method = data.type === jobType.MINING_REWARD ? 'reward' : 'withdraw'
-    const calldata = minerContract.methods[method](data.proof, data.args).encodeABI()
-    return {
-      to: minerContract._address,
-      data: calldata,
-    }
+    return minerContract.methods[method](data.proof, data.args)
   }
 }
 
@@ -219,7 +202,7 @@ async function processJob(job) {
 
 async function submitTx(job, retry = 0) {
   await checkFee(job)
-  currentTx = await txManager.createTx(getTxObject(job))
+  currentTx = await getTxObject(job)
 
   const isWithdraw = job.data.type === jobType.POOF_WITHDRAW || job.data.type === jobType.RELAY
   if (!isWithdraw) {
@@ -227,7 +210,11 @@ async function submitTx(job, retry = 0) {
   }
 
   try {
-    const receipt = await currentTx.send()
+    const receipt = await currentTx.send({
+      from: account,
+      gasPrice: toWei('0.13', 'gwei'),
+      value: job.data.args[5],
+    })
     await updateTxHash(receipt.transactionHash)
     console.log('Mined in block', receipt.blockNumber)
 
