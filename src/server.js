@@ -31,6 +31,7 @@ app.post('/v1/poofWithdraw', controller.poofWithdraw)
 app.get('/status', status.status)
 app.post('/relay', controller.relay)
 app.post('/v1/miningReward', controller.miningReward)
+app.post('/v1/batchReward', controller.batchReward)
 app.post('/v1/miningWithdraw', controller.miningWithdraw)
 
 if (!isAddress(rewardAccount)) {

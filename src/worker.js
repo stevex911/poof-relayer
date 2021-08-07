@@ -49,7 +49,7 @@ async function fetchTree() {
   tree = MerkleTree.deserialize(JSON.parse(elements, convert), poseidonHash2)
 
   if (currentTx && currentJob && ['MINING_REWARD', 'MINING_WITHDRAW'].includes(currentJob.data.type)) {
-    const { proof, args } = currentJob.data
+    const { proof, rewardArgs, args } = currentJob.data
     if (toBN(args.account.inputRoot).eq(toBN(tree.root()))) {
       console.log('Account root is up to date. Skipping Root Update operation...')
       return
@@ -61,10 +61,14 @@ async function fetchTree() {
 
     const minerAddress = await resolver.resolve(poof.PoofMiner.address)
     const instance = new kit.web3.eth.Contract(miningABI, minerAddress)
-    const data =
-      currentJob.data.type === 'MINING_REWARD'
-        ? instance.methods.reward(proof, args, update.proof, update.args).encodeABI()
-        : instance.methods.withdraw(proof, args, update.proof, update.args).encodeABI()
+    let data
+    if (currentJob.data.type === 'MINING_REWARD') {
+      data = instance.methods.reward(proof, args, update.proof, update.args).encodeABI()
+    } else if (currentJob.data.type === 'MINING_WITHDRAW') {
+      data = instance.methods.withdraw(proof, args, update.proof, update.args).encodeABI()
+    } else if (currentJob.data.type === 'BATCH_REWARD') {
+      data = instance.methods.batchReward(rewardArgs).encodeABI()
+    }
     await currentTx.replace({
       to: minerAddress,
       data,
@@ -100,6 +104,8 @@ async function start() {
 function checkFee({ data }) {
   if (data.type === jobType.POOF_WITHDRAW || data.type === jobType.RELAY) {
     return checkPoofFee(data)
+  } else if (data.type === jobType.BATCH_REWARD) {
+    return checkBatchMiningFee(data)
   }
   return checkMiningFee(data)
 }
@@ -135,6 +141,12 @@ async function checkPoofFee({ args, contract }) {
   }
 }
 
+async function checkBatchMiningFee({ args: argList }) {
+  for (const args of argList) {
+    checkMiningFee({ args })
+  }
+}
+
 async function checkMiningFee({ args }) {
   const gasPrice = await redis.hget('gasPrices', 'min')
   const celoPrice = await redis.hget('prices', 'poof')
@@ -164,6 +176,8 @@ function getTxObject({ data }) {
       const contract = new kit.web3.eth.Contract(tornadoABI, data.contract)
       return contract.methods.withdraw(data.proof, ...data.args)
     }
+  } else if (data.type === jobType.BATCH_REWARD) {
+    return minerContract.methods.batchReward(data.rewardArgs)
   } else {
     const method = data.type === jobType.MINING_REWARD ? 'reward' : 'withdraw'
     return minerContract.methods[method](data.proof, data.args)

@@ -2,6 +2,7 @@ const {
   getTornadoWithdrawInputError,
   getMiningRewardInputError,
   getMiningWithdrawInputError,
+  getBatchRewardInputError,
 } = require('./validator')
 const {postJob} = require('./queue')
 const {jobType} = require('./constants')
@@ -48,6 +49,20 @@ async function miningReward(req, res) {
   return res.json({id})
 }
 
+async function batchReward(req, res) {
+  const inputError = getBatchRewardInputError(req.body)
+  if (inputError) {
+    console.log('Invalid input:', inputError)
+    return res.status(400).json({error: inputError})
+  }
+
+  const id = await postJob({
+    type: jobType.BATCH_REWARD,
+    request: req.body,
+  })
+  return res.json({id})
+}
+
 async function miningWithdraw(req, res) {
   const inputError = getMiningWithdrawInputError(req.body)
   if (inputError) {
@@ -66,5 +81,6 @@ module.exports = {
   relay,
   poofWithdraw,
   miningReward,
+  batchReward,
   miningWithdraw,
 }
