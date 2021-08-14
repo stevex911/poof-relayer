@@ -11,6 +11,7 @@ const tornadoABI = require('../abis/tornadoABI.json')
 const tornadoProxyABI = require('../abis/tornadoProxyABI.json')
 const miningABI = require('../abis/mining.abi.json')
 const swapABI = require('../abis/swap.abi.json')
+const poofABI = require('../abis/poof.abi.json')
 const { queue } = require('./queue')
 const { poseidonHash2, getInstance, fromDecimals, sleep } = require('./utils')
 const { jobType, status } = require('./constants')
@@ -25,6 +26,7 @@ const {
   oracleRpcUrl,
   poofServiceFee,
   miningServiceFee,
+  pools,
 } = require('./config')
 const ENSResolver = require('./resolver')
 const resolver = new ENSResolver()
@@ -106,6 +108,8 @@ function checkFee({ data }) {
     return checkPoofFee(data)
   } else if (data.type === jobType.BATCH_REWARD) {
     return checkBatchMiningFee(data)
+  } else if (data.type === jobType.WITHDRAW_V2) {
+    return checkWithdrawV2Fee(data)
   }
   return checkMiningFee(data)
 }
@@ -168,6 +172,38 @@ async function checkMiningFee({ args }) {
   }
 }
 
+async function checkWithdrawV2Fee({ args, contract }) {
+  const { symbol, decimals } = pools[netId].find(
+    entry => entry.poolAddress.toLowerCase() === contract.toLowerCase(),
+  )
+  const [fee, amount] = [args.extData.fee, args.amount].map(toBN)
+  const gasPrice = await redis.hget('gasPrices', 'min')
+
+  const celoPrice = await redis.hget('prices', symbol.toLowerCase())
+  const feePercent = toBN(fromDecimals(amount, decimals))
+    .mul(toBN(poofServiceFee * 1e10))
+    .div(toBN(1e10 * 100))
+
+  const desiredFee = calculateFee(
+    gasPrice.toString(),
+    fromWei(amount), // HARDCODE: 18 decimal assumption
+    '0',
+    celoPrice.toString(),
+    poofServiceFee.toString(),
+    decimals,
+    gasLimits[jobType.POOF_WITHDRAW],
+  )
+  console.log(
+    'sent fee, desired fee, feePercent',
+    fromWei(fee.toString()),
+    fromWei(desiredFee.toString()),
+    fromWei(feePercent.toString()),
+  )
+  if (fee.lt(desiredFee)) {
+    throw new Error('Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.')
+  }
+}
+
 function getTxObject({ data }) {
   if (data.type === jobType.POOF_WITHDRAW || data.type === jobType.RELAY) {
     if (data.type === jobType.POOF_WITHDRAW) {
@@ -176,6 +212,9 @@ function getTxObject({ data }) {
       const contract = new kit.web3.eth.Contract(tornadoABI, data.contract)
       return contract.methods.withdraw(data.proof, ...data.args)
     }
+  } else if (data.type === jobType.WITHDRAW_V2) {
+    const contract = new kit.web3.eth.Contract(poofABI, data.contract)
+    return contract.methods.withdraw(data.proof, data.args)
   } else if (data.type === jobType.BATCH_REWARD) {
     return minerContract.methods.batchReward(data.rewardArgs)
   } else {

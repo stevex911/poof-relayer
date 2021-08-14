@@ -1,7 +1,18 @@
 require('dotenv').config()
 
-const {jobType} = require('./constants')
-const {deployments, alfajoresAddresses, mainnetAddresses} = require('@poofcash/poof-kit')
+const { jobType } = require('./constants')
+const { deployments, alfajoresAddresses, mainnetAddresses } = require('@poofcash/poof-kit')
+const pools = {
+  42220: [],
+  44787: [
+    {
+      poolAddress: '0x530593A254636BE43dEd686a75fc43E31012EcaF',
+      tokenAddress: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1',
+      symbol: 'cUSD',
+      decimals: 18,
+    },
+  ],
+}
 module.exports = {
   netId: Number(process.env.NET_ID) || 42220,
   redisUrl: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
@@ -13,7 +24,7 @@ module.exports = {
   minerMerkleTreeHeight: 20,
   privateKey: process.env.PRIVATE_KEY,
   instances: deployments,
-  poof: process.env.NET_ID === "42220" ? mainnetAddresses : alfajoresAddresses,
+  poof: process.env.NET_ID === '42220' ? mainnetAddresses : alfajoresAddresses,
   port: process.env.PORT || 8000,
   poofServiceFee: Number(process.env.REGULAR_POOF_WITHDRAW_FEE),
   miningServiceFee: Number(process.env.MINING_SERVICE_FEE),
@@ -24,4 +35,5 @@ module.exports = {
     [jobType.MINING_WITHDRAW]: 400000,
   },
   minimumBalance: '1000000000000000000',
+  pools,
 }

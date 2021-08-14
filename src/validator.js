@@ -1,6 +1,6 @@
 const { isAddress, toChecksumAddress } = require('web3-utils')
 const { getInstance } = require('./utils')
-const { rewardAccount } = require('./config')
+const { rewardAccount, netId, pools } = require('./config')
 
 const Ajv = require('ajv')
 const ajv = new Ajv({ format: 'fast' })
@@ -27,6 +27,17 @@ ajv.addKeyword('isKnownContract', {
   errors: true,
 })
 
+ajv.addKeyword('isKnownPool', {
+  validate: (schema, data) => {
+    try {
+      return pools[netId].find(entry => entry.poolAddress.toLowerCase() === data) !== null
+    } catch (e) {
+      return false
+    }
+  },
+  errors: true,
+})
+
 ajv.addKeyword('isFeeRecipient', {
   validate: (schema, data) => {
     try {
@@ -44,6 +55,7 @@ const rewardArgType = { type: 'string', pattern: '^0x[a-fA-F0-9]{2176}$' }
 const encryptedAccountType = { type: 'string', pattern: '^0x[a-fA-F0-9]{392}$' }
 const bytes32Type = { type: 'string', pattern: '^0x[a-fA-F0-9]{64}$' }
 const instanceType = { ...addressType, isKnownContract: true }
+const poolType = { ...addressType, isKnownPool: true }
 const relayerType = { ...addressType, isFeeRecipient: true }
 
 const poofWithdrawSchema = {
@@ -134,57 +146,65 @@ const batchRewardSchema = {
   required: ['rewardArgs', 'args'],
 }
 
+const withdrawArgs = {
+  type: 'object',
+  properties: {
+    amount: bytes32Type,
+    extDataHash: bytes32Type,
+    extData: {
+      type: 'object',
+      properties: {
+        fee: bytes32Type,
+        recipient: addressType,
+        relayer: relayerType,
+        encryptedAccount: encryptedAccountType,
+      },
+      additionalProperties: false,
+      required: ['fee', 'relayer', 'encryptedAccount', 'recipient'],
+    },
+    account: {
+      type: 'object',
+      properties: {
+        inputRoot: bytes32Type,
+        inputNullifierHash: bytes32Type,
+        outputRoot: bytes32Type,
+        outputPathIndices: bytes32Type,
+        outputCommitment: bytes32Type,
+      },
+      additionalProperties: false,
+      required: ['inputRoot', 'inputNullifierHash', 'outputRoot', 'outputPathIndices', 'outputCommitment'],
+    },
+  },
+  additionalProperties: false,
+  required: ['amount', 'extDataHash', 'extData', 'account'],
+}
+
 const miningWithdrawSchema = {
   type: 'object',
   properties: {
     proof: proofType,
-    args: {
-      type: 'object',
-      properties: {
-        amount: bytes32Type,
-        extDataHash: bytes32Type,
-        extData: {
-          type: 'object',
-          properties: {
-            fee: bytes32Type,
-            recipient: addressType,
-            relayer: relayerType,
-            encryptedAccount: encryptedAccountType,
-          },
-          additionalProperties: false,
-          required: ['fee', 'relayer', 'encryptedAccount', 'recipient'],
-        },
-        account: {
-          type: 'object',
-          properties: {
-            inputRoot: bytes32Type,
-            inputNullifierHash: bytes32Type,
-            outputRoot: bytes32Type,
-            outputPathIndices: bytes32Type,
-            outputCommitment: bytes32Type,
-          },
-          additionalProperties: false,
-          required: [
-            'inputRoot',
-            'inputNullifierHash',
-            'outputRoot',
-            'outputPathIndices',
-            'outputCommitment',
-          ],
-        },
-      },
-      additionalProperties: false,
-      required: ['amount', 'extDataHash', 'extData', 'account'],
-    },
+    args: withdrawArgs,
   },
   additionalProperties: false,
   required: ['proof', 'args'],
+}
+
+const withdrawV2Schema = {
+  type: 'object',
+  properties: {
+    contract: poolType,
+    proof: proofType,
+    args: withdrawArgs,
+  },
+  additionalProperties: false,
+  required: ['proof', 'contract', 'args'],
 }
 
 const validateTornadoWithdraw = ajv.compile(poofWithdrawSchema)
 const validateMiningReward = ajv.compile(miningRewardSchema)
 const validateBatchReward = ajv.compile(batchRewardSchema)
 const validateMiningWithdraw = ajv.compile(miningWithdrawSchema)
+const validateWithdrawV2 = ajv.compile(withdrawV2Schema)
 
 function getInputError(validator, data) {
   validator(data)
@@ -211,9 +231,14 @@ function getMiningWithdrawInputError(data) {
   return getInputError(validateMiningWithdraw, data)
 }
 
+function getWithdrawV2InputError(data) {
+  return getInputError(validateWithdrawV2, data)
+}
+
 module.exports = {
   getTornadoWithdrawInputError,
   getMiningRewardInputError,
   getBatchRewardInputError,
   getMiningWithdrawInputError,
+  getWithdrawV2InputError,
 }

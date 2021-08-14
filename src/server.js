@@ -34,6 +34,9 @@ app.post('/v1/miningReward', controller.miningReward)
 app.post('/v1/batchReward', controller.batchReward)
 app.post('/v1/miningWithdraw', controller.miningWithdraw)
 
+// v2 endpoint
+app.post('/v2/withdraw', controller.withdrawV2)
+
 if (!isAddress(rewardAccount)) {
   throw new Error('No REWARD_ACCOUNT specified')
 }
