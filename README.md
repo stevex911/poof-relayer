@@ -13,9 +13,9 @@ docker-compose.yml contains a stack that will automatically provision SSL certif
 1. Download [docker-compose.yml](/docker-compose.yml) and [.env.example](/.env.example)
 
 ```
-# wget https://raw.githubusercontent.com/poofcash/poof-relayer/master/docker-compose.test.yml
-wget https://raw.githubusercontent.com/poofcash/poof-relayer/master/docker-compose.yml
-wget https://raw.githubusercontent.com/poofcash/poof-relayer/master/.env.example -O .env
+# wget https://raw.githubusercontent.com/poofcash/poof-relayer/mainnet/docker-compose.test.yml
+wget https://raw.githubusercontent.com/poofcash/poof-relayer/mainnet/docker-compose.yml
+wget https://raw.githubusercontent.com/poofcash/poof-relayer/mainnet/.env.example -O .env
 ```
 
 2. Setup environment variables
