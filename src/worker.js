@@ -69,10 +69,6 @@ async function fetchTree() {
       // todo: not reachable; not working; not handling treeUpdate
       currentTx = minerContract.methods.batchReward(rewardArgs)
     }
-    await currentTx.replace({
-      to: minerAddress,
-      data,
-    })
     console.log('replaced pending tx')
   }
 }
