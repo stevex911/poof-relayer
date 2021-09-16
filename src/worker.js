@@ -61,15 +61,13 @@ async function fetchTree() {
 
     const update = await controller.treeUpdate(args.account.outputCommitment, tree)
 
-    const minerAddress = await resolver.resolve(poof.PoofMiner.address)
-    const instance = new kit.web3.eth.Contract(miningABI, minerAddress)
-    let data
     if (currentJob.data.type === 'MINING_REWARD') {
-      data = instance.methods.reward(proof, args, update.proof, update.args).encodeABI()
+      currentTx = minerContract.methods.reward(proof, args, update.proof, update.args)
     } else if (currentJob.data.type === 'MINING_WITHDRAW') {
-      data = instance.methods.withdraw(proof, args, update.proof, update.args).encodeABI()
+      currentTx = minerContract.methods.withdraw(proof, args, update.proof, update.args)
     } else if (currentJob.data.type === 'BATCH_REWARD') {
-      data = instance.methods.batchReward(rewardArgs).encodeABI()
+      // todo: not reachable; not working; not handling treeUpdate
+      currentTx = minerContract.methods.batchReward(rewardArgs)
     }
     await currentTx.replace({
       to: minerAddress,
@@ -154,7 +152,7 @@ async function checkBatchMiningFee({ args: argList }) {
 async function checkMiningFee({ args }) {
   const gasPrice = await redis.hget('gasPrices', 'min')
   const celoPrice = await redis.hget('prices', 'poof')
-  const isMiningReward = currentJob.data.type === jobType.MINING_REWARD
+  const isMiningReward = ['MINING_REWARD', 'BATCH_REWARD'].includes(currentJob.data.type)
   const providedFee = isMiningReward ? toBN(args.fee) : toBN(args.extData.fee)
   const balance = await swap.methods.poofVirtualBalance().call()
   const poolWeight = await swap.methods.poolWeight().call()
@@ -167,7 +165,7 @@ async function checkMiningFee({ args }) {
   }
 
   console.log('user provided fee, desired fee', providedFee.toString(), desiredFee.toString())
-  if (toBN(providedFee).lt(desiredFee)) {
+  if (providedFee.lt(desiredFee)) {
     throw new Error('Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.')
   }
 }
