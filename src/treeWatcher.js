@@ -110,6 +110,7 @@ async function init() {
     await updateRedis()
   } catch (e) {
     console.error('error on init treeWatcher', e.message)
+    process.exit(1)
   }
 }
 
