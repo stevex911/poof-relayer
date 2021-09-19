@@ -4,8 +4,7 @@ const ContractKit = require('@celo/contractkit')
 const { toBN, toWei, fromWei } = require('web3-utils')
 const MerkleTree = require('fixed-merkle-tree')
 const Redis = require('ioredis')
-const { GasPriceOracle } = require('gas-price-oracle')
-const { Utils, Controller } = require('tornado-cash-anonymity-mining')
+const { Controller } = require('tornado-cash-anonymity-mining')
 
 const tornadoABI = require('../abis/tornadoABI.json')
 const tornadoProxyABI = require('../abis/tornadoProxyABI.json')
@@ -23,13 +22,10 @@ const {
   privateKey,
   gasLimits,
   instances,
-  oracleRpcUrl,
   poofServiceFee,
   miningServiceFee,
   pools,
 } = require('./config')
-const ENSResolver = require('./resolver')
-const resolver = new ENSResolver()
 const { calculateFee, calculateRewardFee, calculateSwapFee } = require('@poofcash/poof-kit')
 
 let kit
@@ -43,7 +39,6 @@ let minerContract
 let proxyContract
 const redis = new Redis(redisUrl)
 const redisSubscribe = new Redis(redisUrl)
-const gasPriceOracle = new GasPriceOracle({ defaultRpc: oracleRpcUrl })
 
 async function fetchTree() {
   const elements = await redis.get('tree:elements')
