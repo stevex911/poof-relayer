@@ -5,6 +5,7 @@ const jobType = Object.freeze({
   BATCH_REWARD: 'BATCH_REWARD',
   MINING_WITHDRAW: 'MINING_WITHDRAW',
   WITHDRAW_V2: 'WITHDRAW_V2',
+  MINT_V2: 'MINT_V2',
 })
 
 const status = Object.freeze({

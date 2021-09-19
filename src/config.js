@@ -2,17 +2,9 @@ require('dotenv').config()
 
 const { jobType } = require('./constants')
 const { deployments, alfajoresAddresses, mainnetAddresses } = require('@poofcash/poof-kit')
-const pools = {
-  42220: [],
-  44787: [
-    {
-      poolAddress: '0x530593A254636BE43dEd686a75fc43E31012EcaF',
-      tokenAddress: '0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1',
-      symbol: 'cUSD',
-      decimals: 18,
-    },
-  ],
-}
+const { deployments: v2Deployments } = require('@poofcash/poof-v2-kit')
+const pools = v2Deployments
+
 module.exports = {
   netId: Number(process.env.NET_ID) || 42220,
   redisUrl: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
@@ -33,6 +25,7 @@ module.exports = {
     [jobType.POOF_WITHDRAW]: 350000,
     [jobType.MINING_REWARD]: 455000,
     [jobType.MINING_WITHDRAW]: 400000,
+    [jobType.WITHDRAW_V2]: 900000,
   },
   minimumBalance: '1000000000000000000',
   pools,

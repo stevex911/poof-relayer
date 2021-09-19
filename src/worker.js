@@ -98,11 +98,11 @@ async function start() {
 }
 
 function checkFee({ data }) {
-  if (data.type === jobType.POOF_WITHDRAW || data.type === jobType.RELAY) {
+  if ([jobType.POOF_WITHDRAW, jobType.RELAY].includes(data.type)) {
     return checkPoofFee(data)
   } else if (data.type === jobType.BATCH_REWARD) {
     return checkBatchMiningFee(data)
-  } else if (data.type === jobType.WITHDRAW_V2) {
+  } else if ([jobType.WITHDRAW_V2, jobType.MINT_V2].includes(data.type)) {
     return checkWithdrawV2Fee(data)
   }
   return checkMiningFee(data)
@@ -185,7 +185,7 @@ async function checkWithdrawV2Fee({ args, contract }) {
     celoPrice.toString(),
     poofServiceFee.toString(),
     decimals,
-    gasLimits[jobType.POOF_WITHDRAW],
+    gasLimits[jobType.WITHDRAW_V2],
   )
   console.log(
     'sent fee, desired fee, feePercent',
@@ -199,7 +199,7 @@ async function checkWithdrawV2Fee({ args, contract }) {
 }
 
 function getTxObject({ data }) {
-  if (data.type === jobType.POOF_WITHDRAW || data.type === jobType.RELAY) {
+  if ([jobType.POOF_WITHDRAW, jobType.RELAY].includes(data.type)) {
     if (data.type === jobType.POOF_WITHDRAW) {
       return proxyContract.methods.withdraw(data.contract, data.proof, ...data.args)
     } else {
@@ -209,6 +209,9 @@ function getTxObject({ data }) {
   } else if (data.type === jobType.WITHDRAW_V2) {
     const contract = new kit.web3.eth.Contract(poofABI, data.contract)
     return contract.methods.withdraw(data.proof, data.args)
+  } else if (data.type === jobType.MINT_V2) {
+    const contract = new kit.web3.eth.Contract(poofABI, data.contract)
+    return contract.methods.mint(data.proof, data.args)
   } else if (data.type === jobType.BATCH_REWARD) {
     return minerContract.methods.batchReward(data.rewardArgs)
   } else {
@@ -259,7 +262,7 @@ async function submitTx(job, retry = 0) {
   try {
     const receipt = await currentTx.send({
       from: account,
-      gasPrice: toWei('0.13', 'gwei'),
+      gasPrice: toWei('0.5', 'gwei'),
       value: job.data.args[5],
     })
     await updateTxHash(receipt.transactionHash)

@@ -51,6 +51,7 @@ ajv.addKeyword('isFeeRecipient', {
 
 const addressType = { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$', isAddress: true }
 const proofType = { type: 'string', pattern: '^0x[a-fA-F0-9]{512}$' }
+const v2ProofType = { type: 'string', pattern: '^0x[a-fA-F0-9]{1600}$' }
 const rewardArgType = { type: 'string', pattern: '^0x[a-fA-F0-9]{2176}$' }
 const encryptedAccountType = { type: 'string', pattern: '^0x[a-fA-F0-9]{392}$' }
 const bytes32Type = { type: 'string', pattern: '^0x[a-fA-F0-9]{64}$' }
@@ -189,12 +190,42 @@ const miningWithdrawSchema = {
   required: ['proof', 'args'],
 }
 
+const getWithdrawV2Args = operation => ({
+  ...withdrawArgs,
+  properties: {
+    ...withdrawArgs.properties,
+    extData: {
+      type: 'object',
+      properties: {
+        fee: bytes32Type,
+        recipient: addressType,
+        relayer: relayerType,
+        encryptedAccount: encryptedAccountType,
+        operation: { enum: [operation] },
+      },
+      additionalProperties: false,
+      required: ['fee', 'relayer', 'encryptedAccount', 'recipient', 'operation'],
+    },
+  },
+})
+
 const withdrawV2Schema = {
   type: 'object',
   properties: {
     contract: poolType,
-    proof: proofType,
-    args: withdrawArgs,
+    proof: v2ProofType,
+    args: getWithdrawV2Args(1),
+  },
+  additionalProperties: false,
+  required: ['proof', 'contract', 'args'],
+}
+
+const mintV2Schema = {
+  type: 'object',
+  properties: {
+    contract: poolType,
+    proof: v2ProofType,
+    args: getWithdrawV2Args(2),
   },
   additionalProperties: false,
   required: ['proof', 'contract', 'args'],
@@ -205,6 +236,7 @@ const validateMiningReward = ajv.compile(miningRewardSchema)
 const validateBatchReward = ajv.compile(batchRewardSchema)
 const validateMiningWithdraw = ajv.compile(miningWithdrawSchema)
 const validateWithdrawV2 = ajv.compile(withdrawV2Schema)
+const validateMintV2 = ajv.compile(mintV2Schema)
 
 function getInputError(validator, data) {
   validator(data)
@@ -235,10 +267,16 @@ function getWithdrawV2InputError(data) {
   return getInputError(validateWithdrawV2, data)
 }
 
+function getMintV2InputError(data) {
+  return getInputError(validateMintV2, data)
+}
+
 module.exports = {
   getTornadoWithdrawInputError,
   getMiningRewardInputError,
   getBatchRewardInputError,
   getMiningWithdrawInputError,
+
   getWithdrawV2InputError,
+  getMintV2InputError,
 }

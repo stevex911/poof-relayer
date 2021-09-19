@@ -4,6 +4,7 @@ const {
   getMiningWithdrawInputError,
   getBatchRewardInputError,
   getWithdrawV2InputError,
+  getMintV2InputError,
 } = require('./validator')
 const {postJob} = require('./queue')
 const {jobType} = require('./constants')
@@ -92,6 +93,20 @@ async function withdrawV2(req, res) {
   return res.json({id})
 }
 
+async function mintV2(req, res) {
+  const inputError = getMintV2InputError(req.body)
+  if (inputError) {
+    console.log('Invalid input:', inputError)
+    return res.status(400).json({error: inputError})
+  }
+
+  const id = await postJob({
+    type: jobType.MINT_V2,
+    request: req.body,
+  })
+  return res.json({id})
+}
+
 module.exports = {
   relay,
   poofWithdraw,
@@ -101,4 +116,5 @@ module.exports = {
 
   // v2 endpoint
   withdrawV2,
+  mintV2,
 }
