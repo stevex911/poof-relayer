@@ -315,6 +315,16 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
+            "type": "uint256"
+          },
+          {
             "internalType": "bytes32",
             "name": "extDataHash",
             "type": "bytes32"
@@ -325,11 +335,90 @@
                 "internalType": "bytes",
                 "name": "encryptedAccount",
                 "type": "bytes"
+              }
+            ],
+            "internalType": "struct Poof.DepositExtData",
+            "name": "extData",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "inputRoot",
+                "type": "bytes32"
               },
               {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
+                "internalType": "bytes32",
+                "name": "inputNullifierHash",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "outputRoot",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "outputPathIndices",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "outputCommitment",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct Poof.AccountUpdate",
+            "name": "account",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct Poof.DepositArgs",
+        "name": "_args",
+        "type": "tuple"
+      }
+    ],
+    "name": "deposit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_proof",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "extDataHash",
+            "type": "bytes32"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes",
+                "name": "encryptedAccount",
+                "type": "bytes"
               }
             ],
             "internalType": "struct Poof.DepositExtData",
@@ -403,85 +492,6 @@
         ],
         "internalType": "struct Poof.TreeUpdateArgs",
         "name": "_treeUpdateArgs",
-        "type": "tuple"
-      }
-    ],
-    "name": "deposit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "_proof",
-        "type": "bytes"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "extDataHash",
-            "type": "bytes32"
-          },
-          {
-            "components": [
-              {
-                "internalType": "bytes",
-                "name": "encryptedAccount",
-                "type": "bytes"
-              },
-              {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
-              }
-            ],
-            "internalType": "struct Poof.DepositExtData",
-            "name": "extData",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "bytes32",
-                "name": "inputRoot",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "inputNullifierHash",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "outputRoot",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "outputPathIndices",
-                "type": "uint256"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "outputCommitment",
-                "type": "bytes32"
-              }
-            ],
-            "internalType": "struct Poof.AccountUpdate",
-            "name": "account",
-            "type": "tuple"
-          }
-        ],
-        "internalType": "struct Poof.DepositArgs",
-        "name": "_args",
         "type": "tuple"
       }
     ],
@@ -626,6 +636,30 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes",
         "name": "_fromProof",
         "type": "bytes"
@@ -635,6 +669,16 @@
           {
             "internalType": "uint256",
             "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
             "type": "uint256"
           },
           {
@@ -648,6 +692,11 @@
                 "internalType": "uint256",
                 "name": "fee",
                 "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
               },
               {
                 "internalType": "address",
@@ -665,7 +714,7 @@
                 "type": "bytes"
               }
             ],
-            "internalType": "struct Poof.TransferExtData",
+            "internalType": "struct Poof.WithdrawExtData",
             "name": "extData",
             "type": "tuple"
           },
@@ -702,7 +751,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct Poof.TransferArgs",
+        "internalType": "struct Poof.WithdrawArgs",
         "name": "_fromArgs",
         "type": "tuple"
       },
@@ -719,6 +768,16 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
+            "type": "uint256"
+          },
+          {
             "internalType": "bytes32",
             "name": "extDataHash",
             "type": "bytes32"
@@ -729,11 +788,6 @@
                 "internalType": "bytes",
                 "name": "encryptedAccount",
                 "type": "bytes"
-              },
-              {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
               }
             ],
             "internalType": "struct Poof.DepositExtData",
@@ -851,30 +905,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "recipient",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "transfer",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "sender",
         "type": "address"
       },
@@ -929,98 +959,18 @@
     "constant": true
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "unitPerUnderlying",
+    "outputs": [
       {
-        "internalType": "bytes",
-        "name": "_proof",
-        "type": "bytes"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "extDataHash",
-            "type": "bytes32"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "fee",
-                "type": "uint256"
-              },
-              {
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-              },
-              {
-                "internalType": "address",
-                "name": "relayer",
-                "type": "address"
-              },
-              {
-                "internalType": "bytes",
-                "name": "encryptedAccount",
-                "type": "bytes"
-              },
-              {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
-              }
-            ],
-            "internalType": "struct Poof.WithdrawExtData",
-            "name": "extData",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "bytes32",
-                "name": "inputRoot",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "inputNullifierHash",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "outputRoot",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "outputPathIndices",
-                "type": "uint256"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "outputCommitment",
-                "type": "bytes32"
-              }
-            ],
-            "internalType": "struct Poof.AccountUpdate",
-            "name": "account",
-            "type": "tuple"
-          }
-        ],
-        "internalType": "struct Poof.WithdrawArgs",
-        "name": "_args",
-        "type": "tuple"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "withdraw",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -1037,6 +987,16 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
+            "type": "uint256"
+          },
+          {
             "internalType": "bytes32",
             "name": "extDataHash",
             "type": "bytes32"
@@ -1059,14 +1019,14 @@
                 "type": "address"
               },
               {
+                "internalType": "bytes32",
+                "name": "depositProofHash",
+                "type": "bytes32"
+              },
+              {
                 "internalType": "bytes",
                 "name": "encryptedAccount",
                 "type": "bytes"
-              },
-              {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
               }
             ],
             "internalType": "struct Poof.WithdrawExtData",
@@ -1140,6 +1100,110 @@
         ],
         "internalType": "struct Poof.TreeUpdateArgs",
         "name": "_treeUpdateArgs",
+        "type": "tuple"
+      }
+    ],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_proof",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "extDataHash",
+            "type": "bytes32"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "fee",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "relayer",
+                "type": "address"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "depositProofHash",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "encryptedAccount",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct Poof.WithdrawExtData",
+            "name": "extData",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "inputRoot",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "inputNullifierHash",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "outputRoot",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "outputPathIndices",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "outputCommitment",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct Poof.AccountUpdate",
+            "name": "account",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct Poof.WithdrawArgs",
+        "name": "_args",
         "type": "tuple"
       }
     ],
@@ -1177,82 +1241,13 @@
             "type": "uint256"
           },
           {
-            "internalType": "bytes32",
-            "name": "extDataHash",
-            "type": "bytes32"
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
           },
-          {
-            "components": [
-              {
-                "internalType": "bytes",
-                "name": "encryptedAccount",
-                "type": "bytes"
-              },
-              {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
-              }
-            ],
-            "internalType": "struct Poof.DepositExtData",
-            "name": "extData",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "bytes32",
-                "name": "inputRoot",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "inputNullifierHash",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "outputRoot",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "outputPathIndices",
-                "type": "uint256"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "outputCommitment",
-                "type": "bytes32"
-              }
-            ],
-            "internalType": "struct Poof.AccountUpdate",
-            "name": "account",
-            "type": "tuple"
-          }
-        ],
-        "internalType": "struct Poof.DepositArgs",
-        "name": "_args",
-        "type": "tuple"
-      }
-    ],
-    "name": "burn",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "_proof",
-        "type": "bytes"
-      },
-      {
-        "components": [
           {
             "internalType": "uint256",
-            "name": "amount",
+            "name": "unitPerUnderlying",
             "type": "uint256"
           },
           {
@@ -1266,11 +1261,6 @@
                 "internalType": "bytes",
                 "name": "encryptedAccount",
                 "type": "bytes"
-              },
-              {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
               }
             ],
             "internalType": "struct Poof.DepositExtData",
@@ -1367,6 +1357,100 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "extDataHash",
+            "type": "bytes32"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes",
+                "name": "encryptedAccount",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct Poof.DepositExtData",
+            "name": "extData",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "inputRoot",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "inputNullifierHash",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "outputRoot",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "outputPathIndices",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "outputCommitment",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct Poof.AccountUpdate",
+            "name": "account",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct Poof.DepositArgs",
+        "name": "_args",
+        "type": "tuple"
+      }
+    ],
+    "name": "burn",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_proof",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
+            "type": "uint256"
+          },
+          {
             "internalType": "bytes32",
             "name": "extDataHash",
             "type": "bytes32"
@@ -1389,14 +1473,14 @@
                 "type": "address"
               },
               {
+                "internalType": "bytes32",
+                "name": "depositProofHash",
+                "type": "bytes32"
+              },
+              {
                 "internalType": "bytes",
                 "name": "encryptedAccount",
                 "type": "bytes"
-              },
-              {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
               }
             ],
             "internalType": "struct Poof.WithdrawExtData",
@@ -1493,6 +1577,16 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "unitPerUnderlying",
+            "type": "uint256"
+          },
+          {
             "internalType": "bytes32",
             "name": "extDataHash",
             "type": "bytes32"
@@ -1515,14 +1609,14 @@
                 "type": "address"
               },
               {
+                "internalType": "bytes32",
+                "name": "depositProofHash",
+                "type": "bytes32"
+              },
+              {
                 "internalType": "bytes",
                 "name": "encryptedAccount",
                 "type": "bytes"
-              },
-              {
-                "internalType": "enum Poof.Operation",
-                "name": "operation",
-                "type": "uint8"
               }
             ],
             "internalType": "struct Poof.WithdrawExtData",
@@ -1571,5 +1665,25 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "underlyingBalanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
   }
 ]

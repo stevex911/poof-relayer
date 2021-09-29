@@ -94,7 +94,7 @@ async function withdrawV2(req, res) {
 }
 
 async function mintV2(req, res) {
-  const inputError = getMintV2InputError(req.body)
+  const inputError = getWithdrawV2InputError(req.body)
   if (inputError) {
     console.log('Invalid input:', inputError)
     return res.status(400).json({error: inputError})

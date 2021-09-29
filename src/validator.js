@@ -54,6 +54,7 @@ const proofType = { type: 'string', pattern: '^0x[a-fA-F0-9]{512}$' }
 const v2ProofType = { type: 'string', pattern: '^0x[a-fA-F0-9]{1600}$' }
 const rewardArgType = { type: 'string', pattern: '^0x[a-fA-F0-9]{2176}$' }
 const encryptedAccountType = { type: 'string', pattern: '^0x[a-fA-F0-9]{392}$' }
+const encryptedAccountV2Type = { type: 'string', pattern: '^0x[a-fA-F0-9]{480}$' }
 const bytes32Type = { type: 'string', pattern: '^0x[a-fA-F0-9]{64}$' }
 const instanceType = { ...addressType, isKnownContract: true }
 const poolType = { ...addressType, isKnownPool: true }
@@ -190,42 +191,34 @@ const miningWithdrawSchema = {
   required: ['proof', 'args'],
 }
 
-const getWithdrawV2Args = operation => ({
+const withdrawV2Args = {
   ...withdrawArgs,
   properties: {
     ...withdrawArgs.properties,
+    debt: bytes32Type,
+    unitPerUnderlying: bytes32Type,
     extData: {
       type: 'object',
       properties: {
         fee: bytes32Type,
         recipient: addressType,
         relayer: relayerType,
-        encryptedAccount: encryptedAccountType,
-        operation: { enum: [operation] },
+        depositProofHash: bytes32Type,
+        encryptedAccount: encryptedAccountV2Type,
       },
       additionalProperties: false,
-      required: ['fee', 'relayer', 'encryptedAccount', 'recipient', 'operation'],
+      required: ['fee', 'relayer', 'encryptedAccount', 'recipient', 'depositProofHash'],
     },
   },
-})
+  required: ['amount', 'debt', 'unitPerUnderlying', 'extDataHash', 'extData', 'account'],
+}
 
 const withdrawV2Schema = {
   type: 'object',
   properties: {
     contract: poolType,
     proof: v2ProofType,
-    args: getWithdrawV2Args(1),
-  },
-  additionalProperties: false,
-  required: ['proof', 'contract', 'args'],
-}
-
-const mintV2Schema = {
-  type: 'object',
-  properties: {
-    contract: poolType,
-    proof: v2ProofType,
-    args: getWithdrawV2Args(2),
+    args: withdrawV2Args,
   },
   additionalProperties: false,
   required: ['proof', 'contract', 'args'],
@@ -236,7 +229,6 @@ const validateMiningReward = ajv.compile(miningRewardSchema)
 const validateBatchReward = ajv.compile(batchRewardSchema)
 const validateMiningWithdraw = ajv.compile(miningWithdrawSchema)
 const validateWithdrawV2 = ajv.compile(withdrawV2Schema)
-const validateMintV2 = ajv.compile(mintV2Schema)
 
 function getInputError(validator, data) {
   validator(data)
@@ -267,10 +259,6 @@ function getWithdrawV2InputError(data) {
   return getInputError(validateWithdrawV2, data)
 }
 
-function getMintV2InputError(data) {
-  return getInputError(validateMintV2, data)
-}
-
 module.exports = {
   getTornadoWithdrawInputError,
   getMiningRewardInputError,
@@ -278,5 +266,4 @@ module.exports = {
   getMiningWithdrawInputError,
 
   getWithdrawV2InputError,
-  getMintV2InputError,
 }
