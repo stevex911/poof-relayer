@@ -628,10 +628,10 @@
     websnark "git+https://github.com/poofcash/websnark.git#a0226866cc9d9d9f7195ffe439709d25e69ca680"
     yargs "^17.0.1"
 
-"@poofcash/poof-v2-kit@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@poofcash/poof-v2-kit/-/poof-v2-kit-0.0.7.tgz#9fdc37a8088d177b4e2c378233eb8f584f465a1b"
-  integrity sha512-OAxuRktyHxMPrdtmtwrdqAHpXC3TFlAeDsv4DHddTZc2/852bP2G9YDFpx7en+IEHrsCS5L79JuB0TDQimxW0A==
+"@poofcash/poof-v2-kit@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@poofcash/poof-v2-kit/-/poof-v2-kit-0.0.8.tgz#97eb22da356f58dc68e8a8e0d277ebe7a1b49776"
+  integrity sha512-7PKHYHZ7Js4xT7VYeXBk4Nax+F6sloVHhZ8yvUnJa9FyqNKi76b4uNsfV9/qa0+M4EII9H3G+yQPkKRv1CD28g==
   dependencies:
     "@celo/contractkit" "^1.2.4"
     "@typechain/web3-v1" "^3.0.0"
