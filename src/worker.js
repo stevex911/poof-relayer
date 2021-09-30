@@ -27,6 +27,7 @@ const {
   pools,
 } = require('./config')
 const { calculateFee, calculateRewardFee, calculateSwapFee } = require('@poofcash/poof-kit')
+const { calculateFee: calculateFeeV2 } = require('@poofcash/poof-v2-kit')
 
 let kit
 let account
@@ -165,21 +166,17 @@ async function checkWithdrawV2Fee({ args, contract }) {
   const { symbol, decimals } = pools[netId].find(
     entry => entry.poolAddress.toLowerCase() === contract.toLowerCase(),
   )
-  const [fee, amount] = [args.extData.fee, args.amount].map(toBN)
-  const gasPrice = await redis.hget('gasPrices', 'min')
+  const [fee, amount, debt] = [args.extData.fee, args.amount, args.debt].map(toBN)
 
   const celoPrice = await redis.hget('prices', symbol.toLowerCase())
   const feePercent = toBN(fromDecimals(amount, decimals))
     .mul(toBN(poofServiceFee * 1e10))
     .div(toBN(1e10 * 100))
 
-  const desiredFee = calculateFee(
-    gasPrice.toString(),
-    fromWei(amount), // HARDCODE: 18 decimal assumption
-    '0',
-    celoPrice.toString(),
-    poofServiceFee.toString(),
-    decimals,
+  const desiredFee = calculateFeeV2(
+    amount.eq(toBN(0)) ? debt : amount,
+    Number(celoPrice),
+    Number(poofServiceFee),
     gasLimits[jobType.WITHDRAW_V2],
   )
   console.log(
