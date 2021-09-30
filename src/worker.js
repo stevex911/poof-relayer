@@ -174,7 +174,7 @@ async function checkWithdrawV2Fee({ args, contract }) {
     .div(toBN(1e10 * 100))
 
   const desiredFee = calculateFeeV2(
-    amount.eq(toBN(0)) ? debt : amount,
+    debt.add(amount).sub(fee),
     Number(celoPrice),
     Number(poofServiceFee),
     gasLimits[jobType.WITHDRAW_V2],

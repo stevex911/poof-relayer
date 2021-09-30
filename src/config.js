@@ -25,7 +25,7 @@ module.exports = {
     [jobType.POOF_WITHDRAW]: 350000,
     [jobType.MINING_REWARD]: 455000,
     [jobType.MINING_WITHDRAW]: 400000,
-    [jobType.WITHDRAW_V2]: 900000,
+    [jobType.WITHDRAW_V2]: 1e6,
   },
   minimumBalance: '1000000000000000000',
   pools,
