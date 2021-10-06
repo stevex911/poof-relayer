@@ -172,9 +172,11 @@ async function checkWithdrawV2Fee({ args, contract }) {
   const feePercent = toBN(fromDecimals(amount, decimals))
     .mul(toBN(poofServiceFee * 1e10))
     .div(toBN(1e10 * 100))
+  const poof = new kit.web3.eth.Contract(poofABI, contract)
+  const unitPerUnderlying = await poof.methods.unitPerUnderlying().call()
 
   const desiredFee = calculateFeeV2(
-    debt.add(amount).sub(fee),
+    debt.mul(toBN(unitPerUnderlying)).add(amount).sub(fee),
     Number(celoPrice),
     Number(poofServiceFee),
     gasLimits[jobType.WITHDRAW_V2],

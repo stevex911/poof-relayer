@@ -2,7 +2,7 @@ const Redis = require('ioredis')
 const { redisUrl, oracleRpcUrl, rceloAddress } = require('./config')
 const { setSafeInterval } = require('./utils')
 const redis = new Redis(redisUrl)
-const { newKitFromWeb3 } = require('@celo/contractkit')
+const { newKitFromWeb3, StableToken } = require('@celo/contractkit')
 const { fromWei, toWei } = require('web3-utils')
 const Web3 = require('web3')
 
@@ -21,14 +21,16 @@ async function main() {
     const oneEth = toWei('1')
 
     // Get cUSD price in CELO
-    const exchange = await kit.contracts.getExchange()
-    const cusdPrice = 1 / Number(fromWei((await exchange.quoteGoldSell(oneEth)).toString()))
+    const exchangeUSD = await kit.contracts.getExchange(StableToken.cUSD)
+    const exchangeEUR = await kit.contracts.getExchange(StableToken.cEUR)
+    const cusdPrice = Number(fromWei((await exchangeUSD.quoteGoldBuy(oneEth)).toString()))
+    const ceurPrice = Number(fromWei((await exchangeEUR.quoteGoldBuy(oneEth)).toString()))
 
     // get rCELO price in CELO
     const rCELO = new kit.web3.eth.Contract(rceloABI, '0x1a8Dbe5958c597a744Ba51763AbEBD3355996c3e')
     const rceloPrice = Number(fromWei((await rCELO.methods.savingsToCELO(oneEth).call()).toString()))
 
-    const celoPrices = { celo: 1.0, poof: 1.0, rcelo: rceloPrice, cusd: cusdPrice }
+    const celoPrices = { celo: 1.0, poof: 1.0, rcelo: rceloPrice, cusd: cusdPrice, ceur: ceurPrice }
 
     await redis.hmset('prices', celoPrices)
     console.log('Wrote following prices to redis', celoPrices)
