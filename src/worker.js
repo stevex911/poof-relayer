@@ -256,7 +256,7 @@ async function submitTx(job, retry = 0) {
   try {
     const receipt = await currentTx.send({
       from: account,
-      gasPrice: toWei('0.5', 'gwei'),
+      gasPrice: toWei('0.15', 'gwei'),
       value: job.data.args[5],
     })
     await updateTxHash(receipt.transactionHash)
